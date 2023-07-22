@@ -19,7 +19,10 @@ class SensorController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'payload' => Sensor::all(),
+            'status' => 200
+        ]);
     }
 
     /**
