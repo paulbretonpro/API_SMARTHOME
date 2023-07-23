@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CaptorController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\WeatherController;
 use Illuminate\Http\Request;
@@ -22,3 +23,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::resource('sensor', SensorController::class);
 Route::resource('weather', WeatherController::class);
+Route::resource('captor', CaptorController::class);
