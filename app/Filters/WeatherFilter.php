@@ -14,4 +14,10 @@ class WeatherFilter extends DataTransferObject
     public $feels_like;
     /** @var float */
     public $wind_speed;
+    /** @var date */
+    public $date_start;
+    /** @var date */
+    public $date_end;
+    /** @var date */
+    public $date;
 }

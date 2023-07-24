@@ -3,24 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Filters\SensorFilter;
+use App\Http\Requests\SensorIndexRequest;
 use App\Http\Requests\SensorStoreRequest;
 use App\Models\Sensor;
+use App\Repositories\SensorRepository;
 use App\Traits\DatetimeTrait;
 use Exception;
-use Illuminate\Http\Response;
-use PhpParser\Node\Stmt\TryCatch;
 
 class SensorController extends Controller
 {
     use DatetimeTrait;
 
+    public function __construct(private SensorRepository $repo)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(SensorIndexRequest $request)
     {
+        $filters = SensorFilter::fromRequest($request);
+
+        $results = $this->repo->getByFilters($filters);
+
         return response()->json([
-            'payload' => Sensor::all(),
+            'payload' => $results,
             'status' => 200
         ]);
     }
@@ -49,13 +57,5 @@ class SensorController extends Controller
                 'status' => 500,
             ]);
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Sensor $sensor)
-    {
-        //
     }
 }
