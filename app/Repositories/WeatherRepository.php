@@ -20,6 +20,6 @@ class WeatherRepository
             $query->whereDate('datetime', $filters->date);
         }
 
-        return $query->get();
+        return $query->orderBy('datetime', 'desc')->paginate(10);
     }
 }
