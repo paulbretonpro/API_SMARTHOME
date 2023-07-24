@@ -11,4 +11,10 @@ class SensorFilter extends DataTransferObject
     public $temperature;
     /** @var float */
     public $humidity;
+    /** @var date */
+    public $date_start;
+    /** @var date */
+    public $date_end;
+    /** @var date */
+    public $date;
 }
