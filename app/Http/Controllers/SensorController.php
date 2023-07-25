@@ -23,14 +23,21 @@ class SensorController extends Controller
      */
     public function index(SensorIndexRequest $request)
     {
-        $filters = SensorFilter::fromRequest($request);
+        try {
+            $filters = SensorFilter::fromRequest($request);
 
-        $results = $this->repo->getByFilters($filters);
+            $results = $this->repo->getByFilters($filters);
 
-        return response()->json([
-            'payload' => $results,
-            'status' => 200
-        ]);
+            return response()->json([
+                'payload' => $results,
+                'status' => 200,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 500,
+            ]);
+        }
     }
 
     /**

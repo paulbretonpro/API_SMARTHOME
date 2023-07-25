@@ -3,24 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Filters\CaptorFilter;
+use App\Http\Requests\CaptorIndexRequest;
 use App\Http\Requests\CaptorStoreRequest;
 use App\Models\Captor;
-use App\Traits\DatetimeTrait;
+use App\Repositories\CaptorRepository;
 use Exception;
 
 class CaptorController extends Controller
 {
-    use DatetimeTrait;
+
+    public function __construct(private CaptorRepository $repo)
+    {
+    }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(CaptorIndexRequest $request)
     {
-        return response()->json([
-            'payload' => Captor::all(),
-            'status' => 200
-        ]);
+        try {
+            $filters = CaptorFilter::fromRequest($request);
+
+            $results = $this->repo->getByFilters($filters);
+
+            return response()->json([
+                'payload' => $results,
+                'status' => 200,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 500,
+            ]);
+        }
     }
 
     /**
@@ -33,7 +48,7 @@ class CaptorController extends Controller
         try {
             $captor = new Captor();
             $captor->consumption = $newCaptor->consumption;
-            $captor->datetime = $this->getDatetime();
+            $captor->datetime = $newCaptor->datetime;
 
             $captor->save();
             return response()->json([
