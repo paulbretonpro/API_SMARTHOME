@@ -2,7 +2,6 @@
 
 namespace App\Filters;
 
-use App\Models\Sensor;
 use App\Filters\DataTransferObject;
 
 class SensorFilter extends DataTransferObject
@@ -17,4 +16,6 @@ class SensorFilter extends DataTransferObject
     public $date_end;
     /** @var date */
     public $date;
+    /** @var "asc"|"desc" */
+    public $orderBy;
 }

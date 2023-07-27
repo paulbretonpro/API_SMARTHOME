@@ -20,4 +20,6 @@ class WeatherFilter extends DataTransferObject
     public $date_end;
     /** @var date */
     public $date;
+    /** @var "asc"|"desc" */
+    public $orderBy;
 }
