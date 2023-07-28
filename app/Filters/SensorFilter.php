@@ -18,4 +18,6 @@ class SensorFilter extends DataTransferObject
     public $date;
     /** @var "asc"|"desc" */
     public $orderBy;
+    /** @var int */
+    public $perPage;
 }

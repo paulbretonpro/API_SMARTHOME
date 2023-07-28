@@ -10,6 +10,7 @@ class WeatherRepository
     public function getByFilters(WeatherFilter $filters)
     {
         $query = Weather::query();
+        $perPage = 10;
 
         if ($filters->date_start && $filters->date_end) {
             $from = $filters->date_start;
@@ -22,7 +23,10 @@ class WeatherRepository
         if ($filters->orderBy) {
             $query->orderBy('datetime', $filters->orderBy);
         }
+        if ($filters->perPage) {
+            $perPage = $filters->perPage;
+        }
 
-        return $query->paginate(10);
+        return $query->paginate($perPage);
     }
 }

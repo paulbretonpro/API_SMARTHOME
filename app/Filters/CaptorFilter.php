@@ -18,4 +18,6 @@ class CaptorFilter extends DataTransferObject
     public $date;
     /** @var "asc"|"desc" */
     public $orderBy;
+    /** @var int */
+    public $perPage;
 }

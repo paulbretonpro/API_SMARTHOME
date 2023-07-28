@@ -10,6 +10,7 @@ class SensorRepository
     public function getByFilters(SensorFilter $filters)
     {
         $query = Sensor::query();
+        $perPage = 10;
 
         if ($filters->date_start && $filters->date_end) {
             $from = $filters->date_start;
@@ -22,7 +23,9 @@ class SensorRepository
         if ($filters->orderBy) {
             $query->orderBy('datetime', $filters->orderBy);
         }
-
-        return $query->paginate(10);
+        if ($filters->perPage) {
+            $perPage = $filters->perPage;
+        }
+        return $query->paginate($perPage);
     }
 }
