@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\DTO\CaptorDTO;
 use App\Models\Captor;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -56,7 +56,7 @@ class FetchHistoryCaptor extends Command
                         "unit_of_measurement" => "\u00b0C"
                     ],
                     "entity_id" => "sensor.weather_temperature",
-                    "last_changed" => "2016-02-06T22:25:00+00:00",
+                    "last_changed" => "2016-02-06T23:25:00+00:00",
                     "last_updated" => "2016-02-06T23:25:00+00:00",
                     "state" => "1.9"
                 ]
@@ -68,16 +68,13 @@ class FetchHistoryCaptor extends Command
         $this->info('[APP] Start create captors !');
         foreach ($exampleResponse as $captor) {
             try {
-                $datetimeFormated = Carbon::createFromDate($captor['last_changed']);
-                $datetimeFormated->minutes(0);
-                $datetimeFormated->seconds(0);
-                $datetimeFormated->milliseconds(0);
+                $captorDTO = new CaptorDTO($captor['state'], $captor['last_changed']);
 
-                $newCaptor = new Captor();
-                $newCaptor->consumption = $captor['state'];
-                $newCaptor->datetime = $datetimeFormated;
+                $newCaptor = Captor::create([
+                    "consumption" => $captorDTO->consumption,
+                    "datetime" => $captorDTO->datetime,
+                ]);
 
-                $newCaptor->save();
                 $this->info('[APP] creation successfull ...' . $newCaptor->consumption . ' ' . $newCaptor->datetime);
             } catch (Exception $e) {
                 $this->error('[APP] creation error');

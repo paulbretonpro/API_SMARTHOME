@@ -18,6 +18,11 @@ class Captor extends Model
         'datetime'
     ];
 
+    protected $fillable = [
+        "consumption",
+        "datetime"
+    ];
+
     protected function datetime(): Attribute
     {
         return Attribute::make(
