@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\DTO\WeatherDTO;
 use App\Models\Weather;
 use App\Traits\DatetimeTrait;
 use GuzzleHttp\Client;
@@ -50,14 +51,15 @@ class CallApiWeather implements ShouldQueue
 
             $data = json_decode($response->getBody(), true);
 
-            $newWeather = new Weather();
-            $newWeather->feels_like = $data["feels_like"];
-            $newWeather->humidity = $data["humidity"];
-            $newWeather->temperature = $data["temp"];
-            $newWeather->wind_speed = $data["wind_speed"];
-            $newWeather->datetime = $this->getDatetime();
+            $weatherDTO = new WeatherDTO($data["feels_like"], $data["humidity"], $data["temp"], $data["wind_speed"], $this->getDatetime());
 
-            $newWeather->save();
+            Weather::create([
+                'humidity' => $weatherDTO->humidity,
+                'temperature' => $weatherDTO->temperature,
+                'feels_like' => $weatherDTO->feels_like,
+                'wind_speed' => $weatherDTO->wind_speed,
+                'datetime' => $weatherDTO->datetime
+            ]);
         } catch (\Exception $e) {
             // Handle any exceptions that occur during the API call.
             // For example, log the error or retry the job later.

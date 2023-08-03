@@ -15,7 +15,6 @@ class CaptorStoreRequest extends FormRequest
     {
         return [
             'consumption' => 'required|numeric',
-            'datetime' => 'required|date'
         ];
     }
 }

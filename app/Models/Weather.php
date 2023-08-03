@@ -23,6 +23,14 @@ class Weather extends Model
         'datetime'
     ];
 
+    protected $fillable = [
+        'humidity',
+        'temperature',
+        'feels_like',
+        'wind_speed',
+        'datetime'
+    ];
+
 
     protected function datetime(): Attribute
     {
