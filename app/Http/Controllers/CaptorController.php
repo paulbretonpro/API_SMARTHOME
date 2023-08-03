@@ -7,10 +7,12 @@ use App\Http\Requests\CaptorIndexRequest;
 use App\Http\Requests\CaptorStoreRequest;
 use App\Models\Captor;
 use App\Repositories\CaptorRepository;
+use App\Traits\DatetimeTrait;
 use Exception;
 
 class CaptorController extends Controller
 {
+    use DatetimeTrait;
 
     public function __construct(private CaptorRepository $repo)
     {
@@ -48,7 +50,7 @@ class CaptorController extends Controller
         try {
             $captor = new Captor();
             $captor->consumption = $newCaptor->consumption;
-            $captor->datetime = $newCaptor->datetime;
+            $captor->datetime = $this->getDatetime();
 
             $captor->save();
             return response()->json([
