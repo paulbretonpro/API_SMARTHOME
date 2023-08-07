@@ -6,7 +6,7 @@ use DateTime;
 
 class WeatherDTO
 {
-    public function __construct(public int $feels_like, public int $humidity, public int $temperature, public int $wind_speed, public DateTime $datetime)
+    public function __construct(public float $feels_like, public float $humidity, public float $temperature, public int $wind_speed, public DateTime $datetime)
     {
     }
 }
