@@ -21,6 +21,12 @@ class Sensor extends Model
         'datetime'
     ];
 
+    protected $fillable = [
+        'humidity',
+        'temperature',
+        'datetime'
+    ];
+
     protected function datetime(): Attribute
     {
         return Attribute::make(
