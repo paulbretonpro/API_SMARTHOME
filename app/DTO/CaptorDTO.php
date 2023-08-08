@@ -2,14 +2,20 @@
 
 namespace App\DTO;
 
+use App\Traits\DatetimeTrait;
 use Carbon\Carbon;
+use DateTime;
 
 class CaptorDTO
 {
-    public float $consumption;
+    use DatetimeTrait;
 
-    public function __construct(string $consumption, public Carbon $datetime)
+    public float $consumption;
+    public DateTime $datetime;
+
+    public function __construct(string $consumption, Carbon $datetime)
     {
         $this->consumption = floatval($consumption);
+        $this->datetime = $this->getDatetime($datetime);
     }
 }

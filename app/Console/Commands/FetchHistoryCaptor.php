@@ -4,7 +4,10 @@ namespace App\Console\Commands;
 
 use App\DTO\CaptorDTO;
 use App\Models\Captor;
+use Carbon\Carbon;
+use DateTime;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -30,51 +33,39 @@ class FetchHistoryCaptor extends Command
     public function handle(): void
     {
         $this->info('[API Home assistant] Start data recovery !');
-        $exampleResponse =
-            [
-                [
-                    "attributes" => [
-                        "friendly_name" => "Weather Temperature",
-                        "unit_of_measurement" => "\u00b0C"
-                    ],
-                    "entity_id" => "sensor.weather_temperature",
-                    "last_changed" => "2016-02-06T22:15:00+00:00",
-                    "last_updated" => "2016-02-06T22:15:00+00:00",
-                    "state" => "3.9"
+        // API endpoint URL
+        $homeAssistantUrl = "http://192.168.50.179:8123/api/history/period/2023-07-20T00:00:00+00:00";
+        $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMWY0OGIyN2IxYzU0MzY1ODI1ZTAxNGQ2N2IyNDBkZiIsImlhdCI6MTY5MTA1OTU2OCwiZXhwIjoyMDA2NDE5NTY4fQ.tkJ9d5ikgoAlENPVhRnBsjONiG9ncBa5g6DWeCZVL9M";
+
+        $client = new Client();
+
+        try {
+            $response = $client->get($homeAssistantUrl, [
+                'headers' => [
+                    'Authorization' => $token,
+                    "content-type" => "application/json"
                 ],
-                [
-                    "last_changed" => "2016-02-06T20:20:00+00:00",
-                    "state" => "2.9"
-                ],
-                [
-                    "last_changed" => "2016-02-06T22:22:00+00:00",
-                    "state" => "2.2"
-                ],
-                [
-                    "attributes" => [
-                        "friendly_name" => "Weather Temperature",
-                        "unit_of_measurement" => "\u00b0C"
-                    ],
-                    "entity_id" => "sensor.weather_temperature",
-                    "last_changed" => "2016-02-06T23:25:00+00:00",
-                    "last_updated" => "2016-02-06T23:25:00+00:00",
-                    "state" => "1.9"
+                'query' => [
+                    'filter_entity_id' => "sensor.78e36dc092e0_power",
+                    'end_time' => '2023-08-08T23:00:00+00:00',
+                    'no_attributes' => true
                 ]
-            ];
+            ]);
 
-        $this->info('[API Home assistant] End data recovery !');
-
+            $data = json_decode($response->getBody(), true);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+        }
 
         $this->info('[APP] Start create captors !');
-        foreach ($exampleResponse as $captor) {
+        foreach ($data[0] as $key => $value) {
             try {
-                $captorDTO = new CaptorDTO($captor['state'], $captor['last_changed']);
+                $captorDTO = new CaptorDTO($value['state'], new Carbon($value['last_changed']));
 
                 $newCaptor = Captor::create([
                     "consumption" => $captorDTO->consumption,
                     "datetime" => $captorDTO->datetime,
                 ]);
-
                 $this->info('[APP] creation successfull ...' . $newCaptor->consumption . ' ' . $newCaptor->datetime);
             } catch (Exception $e) {
                 $this->error('[APP] creation error');

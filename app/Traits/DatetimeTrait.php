@@ -6,14 +6,12 @@ use Carbon\Carbon;
 
 trait DatetimeTrait
 {
-    public function getDatetime()
+    public function getDatetime(Carbon $datetime = new Carbon())
     {
-        $currentTime = Carbon::now();
+        $datetime->setMicrosecond(0);
+        $datetime->setSecond(0);
+        $datetime->setMinute(0);
 
-        $currentTime->setMicrosecond(0);
-        $currentTime->setSecond(0);
-        $currentTime->setMinute(0);
-
-        return $currentTime;
+        return $datetime;
     }
 }
