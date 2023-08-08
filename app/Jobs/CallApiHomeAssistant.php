@@ -32,7 +32,7 @@ class CallApiHomeAssistant implements ShouldQueue
     public function handle(): void
     {
         // API endpoint URL
-        $homeAssistantUrl = "http://192.168.0.101:8123/api/states/sensor.78e36dc092e0_power";
+        $homeAssistantUrl = "http://192.168.50.179:8123/api/states/sensor.78e36dc092e0_power";
         $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMWY0OGIyN2IxYzU0MzY1ODI1ZTAxNGQ2N2IyNDBkZiIsImlhdCI6MTY5MTA1OTU2OCwiZXhwIjoyMDA2NDE5NTY4fQ.tkJ9d5ikgoAlENPVhRnBsjONiG9ncBa5g6DWeCZVL9M";
 
         $client = new Client();
@@ -47,14 +47,12 @@ class CallApiHomeAssistant implements ShouldQueue
 
             $data = json_decode($response->getBody(), true);
 
-            Log::info($data);
-
-            /*$captorDTO = new CaptorDTO($data['state'], $this->getDatetime());
+            $captorDTO = new CaptorDTO($data['state'], $this->getDatetime());
 
             Captor::create([
                 'consumption' => $captorDTO->consumption,
                 'datetime' => $captorDTO->datetime
-            ]);*/
+            ]);
         } catch (\Exception $e) {
             // Handle any exceptions that occur during the API call.
             // For example, log the error or retry the job later.
