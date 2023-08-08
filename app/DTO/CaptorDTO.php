@@ -6,8 +6,10 @@ use Carbon\Carbon;
 
 class CaptorDTO
 {
+    public float $consumption;
 
-    public function __construct(public float $consumption, public Carbon $datetime)
+    public function __construct(string $consumption, public Carbon $datetime)
     {
+        $this->consumption = floatval($consumption);
     }
 }
