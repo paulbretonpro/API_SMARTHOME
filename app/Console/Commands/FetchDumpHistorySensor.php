@@ -82,7 +82,6 @@ class FetchDumpHistorySensor extends Command
                     Log::error('Error when save sensor: ' . $e->getMessage());
                 }
 
-                $this->info('[APP] creation successfull ...' . $newWeather->datetime);
             } catch (Exception $e) {
                 $this->error('[APP] creation error');
                 Log::error('Error when save captor: ' . $e->getMessage());
