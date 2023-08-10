@@ -9,6 +9,8 @@ use App\Models\Captor;
 use App\Repositories\CaptorRepository;
 use App\Traits\DatetimeTrait;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CaptorController extends Controller
 {
@@ -62,6 +64,19 @@ class CaptorController extends Controller
                 'message' => $e->getMessage(),
                 'status' => 500,
             ]);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        try {
+            Captor::destroy($request->ids);
+
+            return response()->json([
+                'status' => 200
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error when delete Captor : ' . $e->getMessage());
         }
     }
 }

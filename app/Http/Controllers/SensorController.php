@@ -9,6 +9,8 @@ use App\Models\Sensor;
 use App\Repositories\SensorRepository;
 use App\Traits\DatetimeTrait;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SensorController extends Controller
 {
@@ -63,6 +65,19 @@ class SensorController extends Controller
                 'message' => $e->getMessage(),
                 'status' => 500,
             ]);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        try {
+            Sensor::destroy($request->ids);
+
+            return response()->json([
+                'status' => 200
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error when delete Sensor : ' . $e->getMessage());
         }
     }
 }

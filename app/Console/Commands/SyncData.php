@@ -171,7 +171,7 @@ class SyncData extends Command
                     'Authorization' => $this->backupToken
                 ],
                 'query' => [
-                    'filter_entity_id' => "weather.forecast_home",
+                    'filter_entity_id' => "weather.forecast_home_hourly",
                     'end_time' => $this->now,
                 ],
             ]);

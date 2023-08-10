@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Filters\WeatherFilter;
 use App\Http\Requests\WeatherIndexRequest;
+use App\Models\Weather;
 use App\Repositories\WeatherRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class WeatherController extends Controller
 {
@@ -26,5 +29,18 @@ class WeatherController extends Controller
             'payload' => $results,
             'status' => 200
         ]);
+    }
+
+    public function destroy(Request $request)
+    {
+        try {
+            Weather::destroy($request->ids);
+
+            return response()->json([
+                'status' => 200
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error when delete Captor : ' . $e->getMessage());
+        }
     }
 }

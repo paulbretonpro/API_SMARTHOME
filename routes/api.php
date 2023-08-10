@@ -21,6 +21,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('sensor', SensorController::class);
 Route::resource('weather', WeatherController::class);
-Route::resource('captor', CaptorController::class);
+Route::resource('captor', CaptorController::class, ['only' => ['index', 'store']]);
 Route::resource('export', ExportController::class, ['only' => ['index']]);
 Route::resource('sync', SyncController::class, ['only' => ['index']]);
+
+// Delete many ressources
+Route::delete('captor', [CaptorController::class, 'destroy']);
+Route::delete('sensor', [SensorController::class, 'destroy']);
+Route::delete('weather', [WeatherController::class, 'destroy']);
