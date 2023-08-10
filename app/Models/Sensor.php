@@ -16,6 +16,7 @@ class Sensor extends Model
     public $timestamps = false;
 
     protected $visible = [
+        'id',
         'humidity',
         'temperature',
         'datetime'

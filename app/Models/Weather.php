@@ -16,6 +16,7 @@ class Weather extends Model
     public $timestamps = false;
 
     protected $visible = [
+        'id',
         'humidity',
         'temperature',
         'feels_like',

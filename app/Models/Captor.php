@@ -14,6 +14,7 @@ class Captor extends Model
     protected $table = "captor";
     public $timestamps = false;
     protected $visible = [
+        'id',
         'consumption',
         'datetime'
     ];
