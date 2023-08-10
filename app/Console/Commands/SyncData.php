@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\DTO\CaptorDTO;
 use App\DTO\SensorDTO;
 use App\DTO\WeatherDTO;
+use App\Models\Captor;
 use App\Models\Sensor;
 use App\Models\Weather;
 use App\Traits\DatetimeTrait;
@@ -38,10 +40,7 @@ class SyncData extends Command
         $client = new Client();
 
         // API wheather URL
-        $homeApiUrl = 'http://192.168.50.179:8123/api/history/period/';
-        $token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMWY0OGIyN2IxYzU0MzY1ODI1ZTAxNGQ2N2IyNDBkZiIsImlhdCI6MTY5MTA1OTU2OCwiZXhwIjoyMDA2NDE5NTY4fQ.tkJ9d5ikgoAlENPVhRnBsjONiG9ncBa5g6DWeCZVL9M";
-
-        $backupWeatherUrl = 'http://100.90.22.103:8123/api/history/period/';
+        $backupHomeUrl = 'http://100.90.22.103:8123/api/history/period/';
         $backupToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhOTg0ODcwMzlhY2Q0OGVhYTVhMzY2YWE2YTBiMzdjZSIsImlhdCI6MTY5MTQ4NDc3OSwiZXhwIjoyMDA2ODQ0Nzc5fQ.Btagfxjh7jRvqoS_LXKL3mtsFuCmvZbTpr-GzPJPeGo';
 
         $backupSensorUrl = 'http://192.168.50.205/api/sync';
@@ -51,10 +50,8 @@ class SyncData extends Command
         try {
             $lastWeatherRecord = Weather::orderBy('datetime', 'desc')->first();
             $startDate = (new Carbon($lastWeatherRecord->datetime))->toIso8601String();
-            dump($startDate);
-            dump($now);
 
-            $response = $client->get($backupWeatherUrl . $startDate, [
+            $response = $client->get($backupHomeUrl . $startDate, [
                 'headers' => [
                     'Authorization' => $backupToken
                 ],
@@ -84,8 +81,40 @@ class SyncData extends Command
                 }
             }
         } catch (\Exception $e) {
-            // Handle any exceptions that occur during the API call.
-            // For example, log the error or retry the job later.
+            Log::error('Weather API request failed: ' . $e->getMessage());
+        }
+
+        // Sync backup Captor
+        try {
+            $lastWeatherRecord = Captor::orderBy('datetime', 'desc')->first();
+            $startDate = (new Carbon($lastWeatherRecord->datetime))->toIso8601String();
+
+            $response = $client->get($backupHomeUrl . $startDate, [
+                'headers' => [
+                    'Authorization' => $backupToken
+                ],
+                'query' => [
+                    'filter_entity_id' => "sensor.78e36dc092e0_power",
+                    'end_time' => $now,
+                ],
+            ]);
+
+            $data = json_decode($response->getBody(), true);
+
+            foreach ($data[0] as $key => $value) {
+                try {
+                    $captorDTO = new CaptorDTO($value['state'], new Carbon($value['last_changed']));
+
+                    Captor::create([
+                        "consumption" => $captorDTO->consumption,
+                        "datetime" => $captorDTO->datetime,
+                    ]);
+                    $this->info('[APP] create captor ' . $captorDTO->datetime);
+                } catch (Exception $e) {
+                    Log::error('Error when save captor: ' . $e->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
             Log::error('Weather API request failed: ' . $e->getMessage());
         }
 
@@ -110,8 +139,6 @@ class SyncData extends Command
                 }
             }
         } catch (\Exception $e) {
-            // Handle any exceptions that occur during the API call.
-            // For example, log the error or retry the job later.
             Log::error('Sensor API request failed: ' . $e->getMessage());
         }
     }
